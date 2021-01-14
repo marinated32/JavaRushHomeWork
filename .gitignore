@@ -1,0 +1,15 @@
+*.class
+*.jrtc
+*.info
+*.iml
+*.png
+*.properties
+/.idea/
+/out/
+
+
+*.jar
+*.war
+*.ear
+
+!.gitignore
