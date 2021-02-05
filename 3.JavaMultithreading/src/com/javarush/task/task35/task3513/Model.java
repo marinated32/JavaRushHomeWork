@@ -92,4 +92,61 @@ public class Model {
         }
         if (flag) addTile ();
     }
+
+    private Tile[][] rotate(Tile[][] array) {
+        Tile[][] result = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int i = 0; i < FIELD_WIDTH; i++) {
+            for (int j = 0; j < FIELD_WIDTH; j++) {
+                result[j][FIELD_WIDTH - i - 1] = array[i][j];
+            }
+        }
+        return result;
+    }
+
+    public void right() {
+        gameTiles = rotate ( gameTiles );
+        gameTiles = rotate ( gameTiles );
+        left ();
+        gameTiles = rotate ( gameTiles );
+        gameTiles = rotate ( gameTiles );
+    }
+
+    public void down() {
+        gameTiles = rotate ( gameTiles );
+        left ();
+        gameTiles = rotate ( gameTiles );
+        gameTiles = rotate ( gameTiles );
+        gameTiles = rotate ( gameTiles );
+    }
+
+    public void up() {
+        gameTiles = rotate ( gameTiles );
+        gameTiles = rotate ( gameTiles );
+        gameTiles = rotate ( gameTiles );
+        left ();
+        gameTiles = rotate ( gameTiles );
+    }
+
+    public boolean canMove() {
+        boolean flag = false;
+        if (getEmptyTiles ().size () > 0)
+            flag = true;
+        for (int i = 0; i < gameTiles.length; i++) {
+            for (int j = 0; j < gameTiles[i].length; j++) {
+                try {
+                    if (gameTiles[i][j].value == gameTiles[i][j+1].value ||
+                            gameTiles[i][j].value == gameTiles[i+1][j].value) {
+                        flag = true;
+                        break;
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+        return flag;
+    }
+
+    public Tile[][] getGameTiles() {
+        return gameTiles;
+    }
 }
