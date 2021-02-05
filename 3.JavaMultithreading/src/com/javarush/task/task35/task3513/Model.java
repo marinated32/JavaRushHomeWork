@@ -6,9 +6,12 @@ import java.util.List;
 public class Model {
     private static final int FIELD_WIDTH = 4;
     private Tile[][] gameTiles;
+    protected int score, maxTile;
 
     public Model() {
         this.gameTiles = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        this.score = 0;
+        this.maxTile = 0;
         resetGameTiles ();
     }
 
@@ -39,5 +42,36 @@ public class Model {
         if (list.size () < 1) return;
         int randomId = (int) (list.size () * Math.random ());
         list.get ( randomId ).value = Math.random() < 0.9 ? 2 : 4;
+    }
+
+    private void compressTiles(Tile[] tiles) {
+        int zeroId = Integer.MAX_VALUE;
+        for (int i = 0; i < tiles.length; i++) {
+            if (tiles[i].value == 0 && i < zeroId) {
+                zeroId = i;
+            }
+            if (tiles[i].value != 0 && zeroId != Integer.MAX_VALUE) {
+                tiles[zeroId] = tiles[i];
+                tiles[i] = new Tile ( 0 );
+                compressTiles ( tiles );
+                break;
+            }
+        }
+    }
+
+    private void mergeTiles(Tile[] tiles) {
+        for (int i = 0; i < tiles.length; i++) {
+            try {
+                if (tiles[i].value == tiles[i+1].value) {
+                    tiles[i].value = tiles[i].value * 2;
+                    score += tiles[i].value;
+                    tiles[i+1] = new Tile ( 0 );
+                    if (maxTile < tiles[i].value)
+                        maxTile = tiles[i].value;
+                    compressTiles ( tiles );
+                }
+            } catch (Exception e) {
+            }
+        }
     }
 }
