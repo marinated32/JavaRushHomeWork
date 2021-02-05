@@ -44,7 +44,7 @@ public class Model {
         list.get ( randomId ).value = Math.random() < 0.9 ? 2 : 4;
     }
 
-    private void compressTiles(Tile[] tiles) {
+    private boolean compressTiles(Tile[] tiles) {
         int zeroId = Integer.MAX_VALUE;
         for (int i = 0; i < tiles.length; i++) {
             if (tiles[i].value == 0 && i < zeroId) {
@@ -54,24 +54,42 @@ public class Model {
                 tiles[zeroId] = tiles[i];
                 tiles[i] = new Tile ( 0 );
                 compressTiles ( tiles );
-                break;
+                return true;
             }
         }
+        return false;
     }
 
-    private void mergeTiles(Tile[] tiles) {
+    private boolean mergeTiles(Tile[] tiles) {
+        boolean isChanged = false;
         for (int i = 0; i < tiles.length; i++) {
             try {
-                if (tiles[i].value == tiles[i+1].value) {
+                if (tiles[i].value == tiles[i+1].value &&
+                        tiles[i].value != 0) {
                     tiles[i].value = tiles[i].value * 2;
                     score += tiles[i].value;
+                    isChanged = true;
                     tiles[i+1] = new Tile ( 0 );
-                    if (maxTile < tiles[i].value)
+                    if (maxTile < tiles[i].value) {
                         maxTile = tiles[i].value;
+                    }
                     compressTiles ( tiles );
                 }
             } catch (Exception e) {
             }
         }
+        return isChanged;
+    }
+
+    public void left() {
+        boolean flag = false;
+        for (int i = 0; i < gameTiles.length; i++) {
+            boolean comprRes = compressTiles ( gameTiles[i] );
+            boolean merRes = mergeTiles ( gameTiles[i] );
+            if (comprRes || merRes) {
+                flag = true;
+            }
+        }
+        if (flag) addTile ();
     }
 }
